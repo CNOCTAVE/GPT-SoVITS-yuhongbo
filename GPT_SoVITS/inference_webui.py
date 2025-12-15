@@ -1160,7 +1160,10 @@ with gr.Blocks(title="GPT-SoVITS WebUI", analytics_enabled=False, js=js, css=css
             refresh_button.click(fn=change_choices, inputs=[], outputs=[SoVITS_dropdown, GPT_dropdown])
         gr.Markdown(html_center(i18n("*请上传并填写参考信息"), "h3"))
         with gr.Row():
-            inp_ref = gr.Audio(label=i18n("请上传3~10秒内参考音频，超过会报错！"), type="filepath", scale=13)
+            REF_AUDIO_PATH = os.path.abspath(os.path.join(os.getcwd(), "yuhongbo.mp3"))
+            ref_audio_state = gr.State(value=REF_AUDIO_PATH)
+            aux_refs_state = gr.State(value=[])
+            gr.Audio(label=i18n("请上传3~10秒内参考音频，超过会报错！"), type="filepath", scale=13, visible=False)
             with gr.Column(scale=13):
                 ref_text_free = gr.Checkbox(
                     label=i18n("开启无参考文本模式。不填参考文本亦相当于开启。")
@@ -1184,21 +1187,12 @@ with gr.Blocks(title="GPT-SoVITS WebUI", analytics_enabled=False, js=js, css=css
                     choices=list(dict_language.keys()),
                     value=i18n("中文"),
                 )
-                inp_refs = (
-                    gr.File(
-                        label=i18n(
-                            "可选项：通过拖拽多个文件上传多个参考音频（建议同性），平均融合他们的音色。如不填写此项，音色由左侧单个参考音频控制。如是微调模型，建议参考音频全部在微调训练集音色内，底模不用管。"
-                        ),
-                        file_count="multiple",
-                    )
-                    if model_version not in v3v4set
-                    else gr.File(
-                        label=i18n(
-                            "可选项：通过拖拽多个文件上传多个参考音频（建议同性），平均融合他们的音色。如不填写此项，音色由左侧单个参考音频控制。如是微调模型，建议参考音频全部在微调训练集音色内，底模不用管。"
-                        ),
-                        file_count="multiple",
-                        visible=False,
-                    )
+                inp_refs = gr.File(
+                    label=i18n(
+                        "可选项：通过拖拽多个文件上传多个参考音频（建议同性），平均融合他们的音色。如不填写此项，音色由左侧单个参考音频控制。如是微调模型，建议参考音频全部在微调训练集音色内，底模不用管。"
+                    ),
+                    file_count="multiple",
+                    visible=False,
                 )
                 sample_steps = (
                     gr.Radio(
@@ -1289,7 +1283,7 @@ with gr.Blocks(title="GPT-SoVITS WebUI", analytics_enabled=False, js=js, css=css
         inference_button.click(
             get_tts_wav,
             [
-                inp_ref,
+                ref_audio_state,
                 prompt_text,
                 prompt_language,
                 text,
@@ -1301,7 +1295,7 @@ with gr.Blocks(title="GPT-SoVITS WebUI", analytics_enabled=False, js=js, css=css
                 ref_text_free,
                 speed,
                 if_freeze,
-                inp_refs,
+                aux_refs_state,
                 sample_steps,
                 if_sr_Checkbox,
                 pause_second_slider,

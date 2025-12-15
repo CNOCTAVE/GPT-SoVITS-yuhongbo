@@ -3,9 +3,9 @@ ARG TORCH_BASE=full
 
 FROM xxxxrt666/torch-base:cu${CUDA_VERSION}-${TORCH_BASE}
 
-LABEL maintainer="XXXXRT"
+LABEL maintainer="CNOCTAVE <cnoctave@qq.com>"
 LABEL version="V4"
-LABEL description="Docker image for GPT-SoVITS"
+LABEL description="Docker image for GPT-SoVITS, with Yu Hongbo voice."
 
 ARG CUDA_VERSION=12.6
 

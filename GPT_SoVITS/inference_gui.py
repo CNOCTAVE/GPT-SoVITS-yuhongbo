@@ -87,12 +87,9 @@ class GPTSoVITSGUI(QMainWindow):
         self.SoVITS_model_button = QPushButton("选择SoVITS模型文件")
         self.SoVITS_model_button.clicked.connect(self.select_SoVITS_model)
 
-        self.ref_audio_label = QLabel("上传参考音频:")
-        self.ref_audio_input = QLineEdit()
-        self.ref_audio_input.setPlaceholderText("拖拽或选择文件")
-        self.ref_audio_input.setReadOnly(True)
-        self.ref_audio_button = QPushButton("选择音频文件")
-        self.ref_audio_button.clicked.connect(self.select_ref_audio)
+        REF_AUDIO_PATH = os.path.abspath(os.path.join(os.getcwd(), "yuhongbo.mp3"))
+        self.ref_audio_label = QLabel("参考音频(固定):")
+        self.ref_audio_value_label = QLabel("yuhongbo.mp3")
 
         self.ref_text_label = QLabel("参考音频文本:")
         self.ref_text_input = QLineEdit()
@@ -130,7 +127,6 @@ class GPTSoVITSGUI(QMainWindow):
             [
                 self.GPT_model_input,
                 self.SoVITS_model_input,
-                self.ref_audio_input,
                 self.ref_text_input,
                 self.target_text_input,
                 self.output_input,
@@ -162,7 +158,7 @@ class GPTSoVITSGUI(QMainWindow):
 
         input_layout.addWidget(self.ref_audio_label, 5, 0)
         input_layout.addWidget(self.ref_audio_input, 6, 0, 1, 2)
-        input_layout.addWidget(self.ref_audio_button, 6, 2)
+        # reference audio is fixed; no upload button
 
         input_layout.addWidget(self.ref_language_label, 7, 0)
         input_layout.addWidget(self.ref_language_combobox, 8, 0, 1, 1)
@@ -231,10 +227,7 @@ class GPTSoVITSGUI(QMainWindow):
         if file_path:
             self.SoVITS_model_input.setText(file_path)
 
-    def select_ref_audio(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "选择参考音频文件", "", "Audio Files (*.wav *.mp3)")
-        if file_path:
-            self.update_ref_audio(file_path)
+    # reference audio selection disabled — fixed to yuhongbo.mp3
 
     def upload_ref_text(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "选择文本文件", "", "Text Files (*.txt)")
@@ -272,7 +265,7 @@ class GPTSoVITSGUI(QMainWindow):
     def synthesize(self):
         GPT_model_path = self.GPT_model_input.text()
         SoVITS_model_path = self.SoVITS_model_input.text()
-        ref_audio_path = self.ref_audio_input.text()
+        ref_audio_path = os.path.abspath(os.path.join(os.getcwd(), "yuhongbo.mp3"))
         language_combobox = self.ref_language_combobox.currentText()
         language_combobox = i18n(language_combobox)
         ref_text = self.ref_text_input.text()
