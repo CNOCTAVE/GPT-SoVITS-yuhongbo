@@ -324,17 +324,17 @@ fi
 if [ "$USE_CUDA" = true ] && [ "$WORKFLOW" = false ]; then
     if [ "$CUDA" = 128 ]; then
         echo -e "${INFO}Installing PyTorch For CUDA 12.8..."
-        run_pip_quiet torch torchaudio --index-url "https://download.pytorch.org/whl/cu128"
+        uv install torch torchaudio --index "https://download.pytorch.org/whl/cu128"
     elif [ "$CUDA" = 126 ]; then
         echo -e "${INFO}Installing PyTorch For CUDA 12.6..."
-        run_pip_quiet torch torchaudio --index-url "https://download.pytorch.org/whl/cu126"
+        uv install torch torchaudio --index "https://download.pytorch.org/whl/cu126"
     fi
 elif [ "$USE_ROCM" = true ] && [ "$WORKFLOW" = false ]; then
     echo -e "${INFO}Installing PyTorch For ROCm 6.2..."
-    run_pip_quiet torch torchaudio --index-url "https://download.pytorch.org/whl/rocm6.2"
+    uv install torch torchaudio --index "https://download.pytorch.org/whl/rocm6.2"
 elif [ "$USE_CPU" = true ] && [ "$WORKFLOW" = false ]; then
     echo -e "${INFO}Installing PyTorch For CPU..."
-    run_pip_quiet torch torchaudio --index-url "https://download.pytorch.org/whl/cpu"
+    uv install torch torchaudio --index "https://download.pytorch.org/whl/cpu"
 elif [ "$WORKFLOW" = false ]; then
     echo -e "${ERROR}Unknown Err"
     exit 1
@@ -345,9 +345,9 @@ echo -e "${INFO}Installing Python Dependencies From requirements.txt..."
 
 hash -r
 
-run_pip_quiet -r extra-req.txt --no-deps
+uv install -r extra-req.txt --no-deps
 
-run_pip_quiet -r requirements.txt
+uv install -r requirements.txt
 
 echo -e "${SUCCESS}Python Dependencies Installed"
 
